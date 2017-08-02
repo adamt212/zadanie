@@ -1,0 +1,312 @@
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.table.DefaultTableModel;
+
+
+public class MoiZnajomi extends JFrame implements ActionListener
+{
+	JMenuBar menuBar;
+	JLabel lPorządkowa, lWiek, lImie,lNazwisko;
+	JButton bDodaj, bUsuń, bEdytuj;
+	JMenu menuPlik, menuPomoc, menuOpcje;
+	JMenuItem mWyjście, mOProgramie, mpEdytuj, mpUsuń;
+	JTextField textLP,textImie,textNazwisko,textWiek;
+	JScrollPane scrollPane;
+	JPopupMenu popup;
+	JTable tabelka;
+	JFrame ramka;
+	Object[] row;
+	DefaultTableModel model;
+
+	public MoiZnajomi()
+	{
+		
+		ramka = new JFrame();
+		StylWindows();
+		ramka.setTitle("Lista moich znajomych");
+		ramka.setLayout(null);
+		//tworzenie górnego menu
+		menuBar = new JMenuBar();
+		menuPlik = new JMenu("Plik");
+		mWyjście = new JMenuItem("Wyjście");
+		
+		menuPlik.addSeparator();
+		menuPlik.add(mWyjście);
+		
+		mWyjście.addActionListener(this);
+		mWyjście.setAccelerator(KeyStroke.getKeyStroke("ctrl X"));
+		
+		menuPomoc = new JMenu("Pomoc");
+		
+		mOProgramie = new JMenuItem("O Programie");
+		mOProgramie.addActionListener(this);
+		menuPomoc.add(mOProgramie);
+		
+		
+		setJMenuBar(menuBar);
+		menuBar.add(menuPlik);
+		menuBar.add(menuPomoc);
+		//definiowanie tabeli
+		tabelka = new JTable();
+		Object[] kolumny = {"LP","IMIĘ","Nazwisko","Wiek"};
+        model = new DefaultTableModel();
+        model.setColumnIdentifiers(kolumny);
+        tabelka.setModel(model);
+        
+        tabelka.setBackground(Color.LIGHT_GRAY);
+        tabelka.setForeground(Color.black);
+        Font font = new Font("",1,22);
+        tabelka.setFont(font);
+        tabelka.setRowHeight(30);
+        
+        textLP = new JTextField();
+        textImie = new JTextField();
+        textNazwisko = new JTextField();
+        textWiek = new JTextField();
+        
+        textLP.setBounds(100, 250, 100, 25);
+        textLP.setToolTipText("Podaj liczbę porządkową");
+        textImie.setBounds(100, 280, 100, 25);
+        textImie.setToolTipText("Podaj Imię nowej osoby");
+        textNazwisko.setBounds(100, 310, 100, 25);
+        textNazwisko.setToolTipText("Podaj nazwisko nowej osoby");
+        textWiek.setBounds(100, 340, 100, 25);
+        textWiek.setToolTipText("Podaj wiek nowej osoby");
+        
+        lPorządkowa = new JLabel("LP");
+        lPorządkowa.setBounds(70, 250, 100, 25);
+        
+        lImie = new JLabel("Imię");
+        lImie.setBounds(70, 280, 100, 25);
+        
+        lNazwisko = new JLabel("Nazwisko");
+        lNazwisko.setBounds(40, 310, 100, 25);
+        
+        lWiek = new JLabel("Wiek");
+        lWiek.setBounds(65, 340, 100, 25);
+        
+        
+        bDodaj = new JButton("Dodaj");
+        bUsuń = new JButton("Usuń");
+        bEdytuj = new JButton("Edytuj");
+        
+        bDodaj.setBounds(230, 250, 100, 25);
+        bEdytuj.setBounds(230, 295, 100, 25);
+        bUsuń.setBounds(230, 340, 100, 25);
+        
+        
+        JScrollPane pane = new JScrollPane(tabelka);
+        pane.setBounds(30, 30, 800, 200);
+        ramka.add(pane);
+        
+        ramka.add(textLP);
+        ramka.add(textImie);
+        ramka.add(textNazwisko);
+        ramka.add(textWiek);
+        ramka.add(bDodaj);
+        ramka.add(bUsuń);
+        ramka.add(bEdytuj);
+        ramka.add(lPorządkowa);
+        ramka.add(lImie);
+        ramka.add(lNazwisko);
+        ramka.add(lWiek);
+        ramka.add(menuBar);
+       
+        //tworzenie tabeli
+        row = new Object[4];
+        bDodaj.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+             
+                row[0] = textLP.getText();
+                row[1] = textImie.getText();
+                row[2] = textNazwisko.getText();
+                row[3] = textWiek.getText();
+                
+                model.addRow(row);
+            }
+        });
+        
+        bUsuń.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            
+               
+                int i = tabelka.getSelectedRow();
+                if(i >= 0)
+                {
+                    model.removeRow(i);
+                }
+                else{
+                    System.out.println("Błąd");
+                }
+            }
+        });
+        
+        tabelka.addMouseListener(new MouseAdapter(){
+            
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                
+                
+                int i = tabelka.getSelectedRow();
+                
+                textLP.setText(model.getValueAt(i, 0).toString());
+                textImie.setText(model.getValueAt(i, 1).toString());
+                textNazwisko.setText(model.getValueAt(i, 2).toString());
+                textWiek.setText(model.getValueAt(i, 3).toString());
+            }
+            });
+        
+        bEdytuj.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+             
+               
+                int i = tabelka.getSelectedRow();
+                
+                if(i >= 0) 
+                {
+                   model.setValueAt(textLP.getText(), i, 0);
+                   model.setValueAt(textImie.getText(), i, 1);
+                   model.setValueAt(textNazwisko.getText(), i, 2);
+                   model.setValueAt(textWiek.getText(), i, 3);
+                }
+                else
+                {
+                    System.out.println("Błąd Edycji");
+                }
+            }
+        });
+		
+		popup = new JPopupMenu();
+		mpEdytuj = new JMenuItem("Edytuj");
+		mpEdytuj.addActionListener(this);
+		
+		mpUsuń = new JMenuItem("Usuń");
+		mpUsuń.addActionListener(this);
+		
+		popup.add(mpEdytuj);
+		popup.add(mpUsuń);
+		
+		
+		tabelka.setComponentPopupMenu(popup);
+		
+		ramka.setSize(900,450);
+        ramka.setLocationRelativeTo(null);
+        ramka.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ramka.setVisible(true);
+        tabelka.setAutoCreateRowSorter(true);
+        
+       
+		
+	}
+	
+	
+
+	@Override
+	public void actionPerformed(ActionEvent e) 
+	{
+		Object z = e.getSource();
+		
+		if (z == mWyjście)
+		{
+			int odp = JOptionPane.showConfirmDialog(null, "Czy napewno wyjść?", "Pytanie", JOptionPane.YES_NO_OPTION);
+			if(odp == JOptionPane.YES_OPTION)
+			{
+			dispose();
+			ramka.dispose();
+			}
+			
+			else if(odp == JOptionPane.NO_OPTION)
+				JOptionPane.showMessageDialog(null, "Powrót do programu");
+			else if(odp == JOptionPane.CLOSED_OPTION)
+				JOptionPane.showMessageDialog(null, "Tak nie robimy","Informacja", JOptionPane.WARNING_MESSAGE);
+								
+		}
+		
+		else if (z == mOProgramie)
+			JOptionPane.showMessageDialog(this,"Program demonstruje użycie Listy Znajomych", "Informacja", JOptionPane.WARNING_MESSAGE);
+		
+		else if (z == mpEdytuj)
+		{
+			int i = tabelka.getSelectedRow();
+            
+            if(i >= 0) 
+            {
+               model.setValueAt(textLP.getText(), i, 0);
+               model.setValueAt(textImie.getText(), i, 1);
+               model.setValueAt(textNazwisko.getText(), i, 2);
+               model.setValueAt(textWiek.getText(), i, 3);
+            }
+            else
+            {
+                System.out.println("Błąd edycji");
+            }
+		}
+			
+		
+		else if (z == mpUsuń)
+		{
+						int i = tabelka.getSelectedRow();
+				if(i >= 0)
+	                {	                    
+	                    model.removeRow(i);
+	                }
+	                else
+	                    System.out.println("Błąd");
+	        
+		}
+			
+	
+	}
+
+	public void StylWindows()
+	{
+		try 
+		{
+			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		} 
+		catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e)
+		{
+			
+			e.printStackTrace();
+		}
+		SwingUtilities.updateComponentTreeUI(this);
+	}
+
+	public static void main(String[] args)
+	{
+		MoiZnajomi aplikacja = new MoiZnajomi();
+		aplikacja.setVisible(true);
+
+	}
+
+}
+
+
